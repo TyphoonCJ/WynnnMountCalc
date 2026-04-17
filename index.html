@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mount Feed Optimizer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-dark: #1a1510;
+            --bg-panel: #241e18;
+            --bg-input: #1e1914;
+            --border: #3d3228;
+            --border-light: #5c4d3d;
+            --gold: #d4af37;
+            --gold-dark: #b8960c;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --text: #e8dcc8;
+            --text-dim: #a89b8c;
+            --accent-red: #c75b39;
+            --accent-green: #5a8f5a;
+            --accent-blue: #5a7a8f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(199, 91, 57, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .how-to-use {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .how-to-use strong {
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+        }
+
+        .config-row {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .config-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .config-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-input {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            width: 80px;
+            border-radius: 4px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .level-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .help-text {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .stat-box:focus-within {
+            border-color: var(--gold-dark);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stat-name {
+            font-family: 'Cinzel', serif;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .stat-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            opacity: 0.7;
+        }
+
+        .stat-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-input-group label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .stat-input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .stat-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .optimize-btn {
+            background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+            border: 1px solid var(--gold);
+            color: var(--bg-dark);
+            padding: 14px 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .optimize-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .optimize-btn:active {
+            transform: translateY(0);
+        }
+
+        .optimize-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 14px 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .reset-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .solution-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .solution-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .solution-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+
+        .solution-status {
+            background: var(--bg-dark);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .solution-status.complete {
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .solution-status.partial {
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .materials-bubbles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .material-bubble {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            min-width: 140px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .material-bubble:hover {
+            transform: translateY(-2px);
+            border-color: var(--gold);
+        }
+
+        .bubble-name {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .bubble-level {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+        }
+
+        .bubble-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .bubble-stat {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+        }
+
+        .stats-gained-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stats-gained-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stats-gained-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-gain-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-gain-name {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .stat-gain-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+        }
+
+        .excess-stats {
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .excess-stats strong {
+            color: var(--accent-red);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .error-message {
+            color: var(--accent-red);
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 21, 16, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-panel);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .loading-subtext {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .config-row { flex-direction: column; align-items: flex-start; }
+            .button-row { flex-direction: column; }
+            .loading-content { margin: 20px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mount Feed Optimizer</h1>
+            <div class="subtitle">Calculate optimal materials to max out your mount</div>
+        </header>
+
+        <div class="panel">
+            <div class="panel-header">How to Use</div>
+            <div class="panel-body">
+                <div class="how-to-use">
+                    <strong>Step 1:</strong> Enter your mount's highest stat value - this determines the maximum material level you can use.<br>
+                    <strong>Step 2:</strong> For each stat, enter its current <strong>Limit</strong> and <strong>Max</strong> value.<br>
+                    <strong>Step 3:</strong> Click "Find Optimal Materials" to get the minimum materials needed to reach max on all stats.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Configuration</div>
+            <div class="panel-body">
+                <div class="config-row">
+                    <div class="config-group">
+                        <span class="config-label">Mount Highest Stat:</span>
+                        <input type="number" id="mountLevel" class="level-input" value="10" min="1" max="115">
+                    </div>
+                </div>
+                <div class="help-text">
+                    Materials will be selected from the highest available level based on your mount's highest stat. The optimizer finds the minimum number of materials needed.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Mount Stats</div>
+            <div class="panel-body">
+                <div class="help-text" style="margin-bottom: 15px;">
+                    Enter <strong>Limit</strong> and <strong>Max</strong> for each stat. If Stat is maxed leave blank or put in 0 works either way.
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Generated by JS -->
+                </div>
+
+                <div class="button-row">
+                    <button class="optimize-btn" id="calcBtn" onclick="calculate()">Find Optimal Materials</button>
+                    <button class="reset-btn" id="resetBtn" onclick="resetFields()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel results" id="resultsPanel">
+            <div class="panel-header">Optimization Results</div>
+            <div class="panel-body" id="resultsBody">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Optimizing...</div>
+            <div class="loading-subtext">Finding the best material combination</div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // MATERIAL DATA - Organized by level thresholds
+        // ============================================================================
+        const MATERIALS_BY_LEVEL = [
+            { max: 9, materials: [
+                ["Copper Ingot", { Energy: 4, Toughness: 8 }],
+                ["Copper Gem", { Speed: 4, Energy: 2, Training: 6 }],
+                ["Oak Wood", { Speed: 2, Acceleration: 6, Toughness: 4 }],
+                ["Oak Paper", { Altitude: 8, Boost: 4 }],
+                ["Wheat String", { Acceleration: 2, Handling: 4, Boost: 6 }],
+                ["Wheat Grains", { Speed: 8, Altitude: 4 }],
+                ["Gudgeon Oil", { Altitude: 2, Handling: 6, Training: 4 }],
+                ["Gudgeon Meat", { Acceleration: 4, Energy: 8 }],
+            ]},
+            { max: 19, materials: [
+                ["Granite Ingot", { Energy: 5, Toughness: 10 }],
+                ["Granite Gem", { Speed: 5, Energy: 2, Training: 8 }],
+                ["Birch Wood", { Speed: 2, Acceleration: 8, Toughness: 5 }],
+                ["Birch Paper", { Altitude: 10, Boost: 5 }],
+                ["Barley String", { Acceleration: 2, Handling: 5, Boost: 8 }],
+                ["Barley Grains", { Speed: 10, Altitude: 5 }],
+                ["Trout Oil", { Altitude: 2, Handling: 8, Training: 5 }],
+                ["Trout Meat", { Acceleration: 5, Energy: 10 }],
+            ]},
+            { max: 29, materials: [
+                ["Gold Ingot", { Energy: 5, Toughness: 12 }],
+                ["Gold Gem", { Speed: 6, Energy: 3, Training: 9 }],
+                ["Willow Wood", { Speed: 3, Acceleration: 9, Toughness: 6 }],
+                ["Willow Paper", { Altitude: 12, Boost: 5 }],
+                ["Oat String", { Acceleration: 3, Handling: 6, Boost: 9 }],
+                ["Oat Grains", { Speed: 12, Altitude: 5 }],
+                ["Salmon Oil", { Altitude: 3, Handling: 9, Training: 6 }],
+                ["Salmon Meat", { Acceleration: 5, Energy: 12 }],
+            ]},
+            { max: 39, materials: [
+                ["Sandstone Ingot", { Energy: 6, Toughness: 14 }],
+                ["Sandstone Gem", { Speed: 6, Energy: 3, Training: 11 }],
+                ["Acacia Wood", { Speed: 3, Acceleration: 11, Toughness: 6 }],
+                ["Acacia Paper", { Altitude: 14, Boost: 6 }],
+                ["Malt String", { Acceleration: 3, Handling: 6, Boost: 11 }],
+                ["Malt Grains", { Speed: 14, Altitude: 6 }],
+                ["Carp Oil", { Altitude: 3, Handling: 11, Training: 6 }],
+                ["Carp Meat", { Acceleration: 6, Energy: 14 }],
+            ]},
+            { max: 49, materials: [
+                ["Iron Ingot", { Energy: 6, Toughness: 16 }],
+                ["Iron Gem", { Speed: 7, Energy: 3, Training: 12 }],
+                ["Spruce Wood", { Speed: 3, Acceleration: 12, Toughness: 7 }],
+                ["Spruce Paper", { Altitude: 16, Boost: 6 }],
+                ["Hops String", { Acceleration: 3, Handling: 7, Boost: 12 }],
+                ["Hops Grains", { Speed: 16, Altitude: 6 }],
+                ["Icefish Oil", { Altitude: 3, Handling: 12, Training: 7 }],
+                ["Icefish Meat", { Acceleration: 6, Energy: 16 }],
+            ]},
+            { max: 59, materials: [
+                ["Silver Ingot", { Energy: 7, Toughness: 18 }],
+                ["Silver Gem", { Speed: 8, Energy: 4, Training: 14 }],
+                ["Jungle Wood", { Speed: 4, Acceleration: 14, Toughness: 8 }],
+                ["Jungle Paper", { Altitude: 18, Boost: 7 }],
+                ["Rye String", { Acceleration: 4, Handling: 8, Boost: 14 }],
+                ["Rye Grains", { Speed: 18, Altitude: 7 }],
+                ["Piranha Oil", { Altitude: 4, Handling: 14, Training: 8 }],
+                ["Piranha Meat", { Acceleration: 7, Energy: 18 }],
+            ]},
+            { max: 69, materials: [
+                ["Cobalt Ingot", { Energy: 8, Toughness: 20 }],
+                ["Cobalt Gem", { Speed: 9, Energy: 4, Training: 15 }],
+                ["Dark Wood", { Speed: 4, Acceleration: 15, Toughness: 9 }],
+                ["Dark Paper", { Altitude: 20, Boost: 8 }],
+                ["Millet String", { Acceleration: 4, Handling: 9, Boost: 15 }],
+                ["Millet Grains", { Speed: 20, Altitude: 8 }],
+                ["Koi Oil", { Altitude: 4, Handling: 15, Training: 9 }],
+                ["Koi Meat", { Acceleration: 8, Energy: 20 }],
+            ]},
+            { max: 79, materials: [
+                ["Kanderstone Ingot", { Energy: 8, Toughness: 22 }],
+                ["Kanderstone Gem", { Speed: 10, Energy: 4, Training: 17 }],
+                ["Light Wood", { Speed: 4, Acceleration: 17, Toughness: 10 }],
+                ["Light Paper", { Altitude: 22, Boost: 8 }],
+                ["Decay String", { Acceleration: 4, Handling: 10, Boost: 17 }],
+                ["Decay Grains", { Speed: 22, Altitude: 8 }],
+                ["Gylia Oil", { Altitude: 4, Handling: 17, Training: 10 }],
+                ["Gylia Meat", { Acceleration: 8, Energy: 22 }],
+            ]},
+            { max: 89, materials: [
+                ["Diamond Ingot", { Energy: 9, Toughness: 24 }],
+                ["Diamond Gem", { Speed: 10, Energy: 4, Training: 18 }],
+                ["Pine Wood", { Speed: 4, Acceleration: 18, Toughness: 10 }],
+                ["Pine Paper", { Altitude: 24, Boost: 9 }],
+                ["Rice String", { Acceleration: 4, Handling: 10, Boost: 18 }],
+                ["Rice Grains", { Speed: 24, Altitude: 9 }],
+                ["Bass Oil", { Altitude: 4, Handling: 18, Training: 10 }],
+                ["Bass Meat", { Acceleration: 9, Energy: 24 }],
+            ]},
+            { max: 99, materials: [
+                ["Molten Ingot", { Energy: 9, Toughness: 26 }],
+                ["Molten Gem", { Speed: 11, Energy: 5, Training: 20 }],
+                ["Avo Wood", { Speed: 5, Acceleration: 20, Toughness: 11 }],
+                ["Avo Paper", { Altitude: 26, Boost: 9 }],
+                ["Sorghum String", { Acceleration: 5, Handling: 11, Boost: 20 }],
+                ["Sorghum Grains", { Speed: 26, Altitude: 9 }],
+                ["Molten Oil", { Altitude: 5, Handling: 20, Training: 11 }],
+                ["Molten Meat", { Acceleration: 9, Energy: 26 }],
+            ]},
+            { max: 104, materials: [
+                ["Voidstone Ingot", { Energy: 10, Toughness: 28 }],
+                ["Voidstone Gem", { Speed: 12, Energy: 5, Training: 21 }],
+                ["Sky Wood", { Speed: 5, Acceleration: 21, Toughness: 12 }],
+                ["Sky Paper", { Altitude: 28, Boost: 10 }],
+                ["Hemp String", { Acceleration: 5, Handling: 12, Boost: 21 }],
+                ["Hemp Grains", { Speed: 28, Altitude: 10 }],
+                ["Starfish Oil", { Altitude: 5, Handling: 21, Training: 12 }],
+                ["Starfish Meat", { Acceleration: 10, Energy: 28 }],
+            ]},
+            { max: 109, materials: [
+                ["Dernic Ingot", { Energy: 10, Toughness: 29 }],
+                ["Dernic Gem", { Speed: 12, Energy: 5, Training: 22 }],
+                ["Dernic Wood", { Speed: 5, Acceleration: 22, Toughness: 12 }],
+                ["Dernic Paper", { Altitude: 29, Boost: 10 }],
+                ["Dernic String", { Acceleration: 5, Handling: 12, Boost: 22 }],
+                ["Dernic Grains", { Speed: 29, Altitude: 10 }],
+                ["Dernic Oil", { Altitude: 5, Handling: 22, Training: 12 }],
+                ["Dernic Meat", { Acceleration: 10, Energy: 29 }],
+            ]},
+            { max: 114, materials: [
+                ["Titanium Ingot", { Energy: 11, Toughness: 30 }],
+                ["Titanium Gem", { Speed: 13, Energy: 5, Training: 23 }],
+                ["Maple Wood", { Speed: 5, Acceleration: 23, Toughness: 13 }],
+                ["Maple Paper", { Altitude: 30, Boost: 11 }],
+                ["Jute String", { Acceleration: 5, Handling: 13, Boost: 23 }],
+                ["Jute Grains", { Speed: 30, Altitude: 11 }],
+                ["Sturgeon Oil", { Altitude: 5, Handling: 23, Training: 13 }],
+                ["Sturgeon Meat", { Acceleration: 11, Energy: 30 }],
+            ]},
+            { max: 119, materials: [
+                ["Cinnabar Ingot", { Energy: 11, Toughness: 31 }],
+                ["Cinnabar Gem", { Speed: 13, Energy: 5, Training: 23 }],
+                ["Redwood Wood", { Speed: 5, Acceleration: 23, Toughness: 13 }],
+                ["Redwood Paper", { Altitude: 31, Boost: 11 }],
+                ["Heather String", { Acceleration: 5, Handling: 13, Boost: 23 }],
+                ["Heather Grains", { Speed: 31, Altitude: 11 }],
+                ["Mahseer Oil", { Altitude: 5, Handling: 23, Training: 13 }],
+                ["Mahseer Meat", { Acceleration: 11, Energy: 31 }],
+            ]},
+        ];
+
+        const STATS = ["Speed", "Acceleration", "Altitude", "Energy", "Handling", "Toughness", "Boost", "Training"];
+        const INF = 1000000000;
+
+        const statColors = {
+            Speed: '#f7f973',
+            Acceleration: '#9cfcfd',
+            Altitude: '#aaaaaa',
+            Energy: '#97fb70',
+            Handling: '#e2625c',
+            Toughness: '#777777',
+            Boost: '#e565f7',
+            Training: '#ebad3f'
+        };
+
+        // ============================================================================
+        // LOADING OVERLAY FUNCTIONS
+        // ============================================================================
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+            document.getElementById('calcBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('calcBtn').disabled = false;
+            document.getElementById('resetBtn').disabled = false;
+        }
+
+        // ============================================================================
+        // UI INITIALIZATION
+        // ============================================================================
+        function init() {
+            createStatInputs();
+        }
+
+        function createStatInputs() {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = '';
+
+            STATS.forEach(stat => {
+                const box = document.createElement('div');
+                box.className = 'stat-box';
+                box.innerHTML = `
+                    <div class="stat-header">
+                        <span class="stat-name">${stat}</span>
+                        <div class="stat-icon" style="background: ${statColors[stat]}"></div>
+                    </div>
+                    <div class="stat-inputs">
+                        <div class="stat-input-group">
+                            <label>Limit</label>
+                            <input type="number" id="${stat}_limit" class="stat-input" placeholder="0" value="0" min="0">
+                        </div>
+                        <div class="stat-input-group">
+                            <label>Max</label>
+                            <input type="number" id="${stat}_max" class="stat-input" placeholder="0" value="0" min="0">
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(box);
+            });
+        }
+
+        function resetFields() {
+            document.getElementById('mountLevel').value = '10';
+            STATS.forEach(stat => {
+                document.getElementById(`${stat}_limit`).value = '0';
+                document.getElementById(`${stat}_max`).value = '0';
+            });
+            document.getElementById('resultsPanel').style.display = 'none';
+        }
+
+        // ============================================================================
+        // CORE OPTIMIZATION ALGORITHM
+        // ============================================================================
+        function getMaterialsForLevel(highestStat) {
+            for (const entry of MATERIALS_BY_LEVEL) {
+                if (highestStat <= entry.max) {
+                    return entry.materials;
+                }
+            }
+            return MATERIALS_BY_LEVEL[MATERIALS_BY_LEVEL.length - 1].materials;
+        }
+
+        function buildNeed(ist, soll) {
+            return STATS.map(s => Math.max(0, soll[s] - ist[s]));
+        }
+
+        function toStateKey(state) {
+            return state.join(',');
+        }
+
+        function optimizeMaterials(need, materials) {
+            const statCount = STATS.length;
+
+            const normalizedMaterials = materials.map(([name, bonus]) => {
+                const bonusVector = new Array(statCount);
+                for (let i = 0; i < statCount; i++) {
+                    bonusVector[i] = bonus[STATS[i]] || 0;
+                }
+                return { name, bonusVector };
+            });
+
+            if (need.every(x => x === 0)) {
+                return { count: 0, path: [] };
+            }
+
+            const startState = need.slice();
+            const startKey = toStateKey(startState);
+            const visited = new Set([startKey]);
+            const parent = new Map();
+            const queue = [startState];
+            let head = 0;
+            let solvedKey = null;
+
+            while (head < queue.length) {
+                const state = queue[head];
+                head++;
+                const stateKey = toStateKey(state);
+
+                for (const material of normalizedMaterials) {
+                    let changed = false;
+                    let allZero = true;
+                    const nextState = new Array(statCount);
+
+                    for (let i = 0; i < statCount; i++) {
+                        const reduced = state[i] - material.bonusVector[i];
+                        const nextValue = reduced > 0 ? reduced : 0;
+                        nextState[i] = nextValue;
+                        if (nextValue !== state[i]) changed = true;
+                        if (nextValue !== 0) allZero = false;
+                    }
+
+                    if (!changed) continue;
+
+                    const nextKey = toStateKey(nextState);
+                    if (visited.has(nextKey)) continue;
+
+                    visited.add(nextKey);
+                    parent.set(nextKey, { prevKey: stateKey, material: material.name });
+
+                    if (allZero) {
+                        solvedKey = nextKey;
+                        break;
+                    }
+
+                    queue.push(nextState);
+                }
+
+                if (solvedKey !== null) break;
+            }
+
+            if (solvedKey === null) {
+                return { count: INF, path: null };
+            }
+
+            const path = [];
+            let cursor = solvedKey;
+            while (cursor !== startKey) {
+                const step = parent.get(cursor);
+                if (!step) return { count: INF, path: null };
+                path.push(step.material);
+                cursor = step.prevKey;
+            }
+
+            path.reverse();
+            return { count: path.length, path };
+        }
+
+        // ============================================================================
+        // CALCULATION WITH ASYNC LOADING
+        // ============================================================================
+        async function calculate() {
+            showLoading();
+
+            // Small delay to allow UI to update (show loading spinner)
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            try {
+                const mountLevel = parseInt(document.getElementById('mountLevel').value) || 0;
+
+                const ist = {};
+                const soll = {};
+
+                for (const stat of STATS) {
+                    const limit = parseInt(document.getElementById(`${stat}_limit`).value) || 0;
+                    const max = parseInt(document.getElementById(`${stat}_max`).value) || 0;
+                    ist[stat] = limit;
+                    soll[stat] = max;
+                }
+
+                const need = buildNeed(ist, soll);
+                const hasAnyGap = need.some(x => x > 0);
+
+                if (!hasAnyGap) {
+                    displayError('All stats are already at maximum!');
+                    return;
+                }
+
+                const materials = getMaterialsForLevel(mountLevel);
+                const result = optimizeMaterials(need, materials);
+
+                if (result.count >= INF || result.path === null) {
+                    displayError('Cannot max all stats with available materials at this level. Try a higher material level or check your mount stats.');
+                    return;
+                }
+
+                displayResults(result, need, ist, soll, mountLevel);
+            } catch (err) {
+                displayError('An error occurred during calculation: ' + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayResults(result, need, ist, soll, mountLevel) {
+            const panel = document.getElementById('resultsPanel');
+            const body = document.getElementById('resultsBody');
+
+            const materialCounts = {};
+            for (const name of result.path) {
+                materialCounts[name] = (materialCounts[name] || 0) + 1;
+            }
+
+            const statsGained = {};
+            const excessStats = {};
+
+            STATS.forEach(stat => {
+                statsGained[stat] = 0;
+                excessStats[stat] = 0;
+            });
+
+            const materials = getMaterialsForLevel(mountLevel);
+            const materialMap = {};
+            materials.forEach(([name, stats]) => {
+                materialMap[name] = stats;
+            });
+
+            for (const [matName, count] of Object.entries(materialCounts)) {
+                const matStats = materialMap[matName];
+                if (!matStats) continue;
+
+                for (const [stat, value] of Object.entries(matStats)) {
+                    const totalProvided = value * count;
+                    const needed = Math.max(0, soll[stat] - ist[stat]);
+                    const actualGain = Math.min(totalProvided, needed);
+                    const excess = totalProvided - actualGain;
+
+                    statsGained[stat] += actualGain;
+                    excessStats[stat] += excess;
+                }
+            }
+
+            let html = `
+                <div class="solution-card">
+                    <div class="solution-header">
+                        <div class="solution-title">Optimal Materials</div>
+                        <div class="solution-status complete">
+                            ${result.count} Materials Needed
+                        </div>
+                    </div>
+
+                    <div class="materials-bubbles">
+            `;
+
+            for (const [name, count] of Object.entries(materialCounts)) {
+                const matStats = materialMap[name];
+                const statsDisplay = [];
+
+                for (const [stat, value] of Object.entries(matStats)) {
+                    const totalValue = value * count;
+                    statsDisplay.push(`<span class="bubble-stat" style="border-color: ${statColors[stat]}; color: ${statColors[stat]}">${stat} +${totalValue}</span>`);
+                }
+
+                html += `
+                    <div class="material-bubble">
+                        <div class="bubble-name">${name}</div>
+                        <div class="bubble-level">${count}x</div>
+                        <div class="bubble-stats">${statsDisplay.join('')}</div>
+                    </div>
+                `;
+            }
+
+            html += `
+                    </div>
+
+                    <div class="stats-gained-section">
+                        <div class="stats-gained-title">Stats Gained</div>
+                        <div class="stats-gained-grid">
+            `;
+
+            for (const stat of STATS) {
+                if (statsGained[stat] > 0 || need[STATS.indexOf(stat)] > 0) {
+                    html += `
+                        <div class="stat-gain-item">
+                            <div class="stat-gain-name" style="color: ${statColors[stat]}">${stat}</div>
+                            <div class="stat-gain-value" style="color: ${statColors[stat]}">+${statsGained[stat]}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += `
+                        </div>
+                    </div>
+            `;
+
+            const hasExcess = Object.values(excessStats).some(x => x > 0);
+            if (hasExcess) {
+                const excessList = [];
+                for (const stat of STATS) {
+                    if (excessStats[stat] > 0) {
+                        excessList.push(`${stat}: ${excessStats[stat]}`);
+                    }
+                }
+
+                html += `
+                    <div class="excess-stats">
+                        <strong>Excess Stats:</strong> ${excessList.join(', ')}
+                    </div>
+                `;
+            }
+
+            html += `
+                </div>
+            `;
+
+            body.innerHTML = html;
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayError(message) {
+            const panel = document.getElementById('resultsPanel');
+            const body = document.getElementById('resultsBody');
+
+            body.innerHTML = `<div class="error-message">${message}</div>`;
+            panel.style.display = 'block';
+        }
+
+        init();
+    </script>
+</body>
+</html>
